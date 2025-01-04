@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="flex">
+    <div class="w-1/4 p-4 bg-white shadow-lg rounded-lg">
+        <h2 class="text-lg font-bold mb-4">Categories</h2>
+        <ul>
+            <li>
+                <a 
+                    href="{% url 'home' %}" 
+                    class="text-blue-500 {% if not selected_category %}font-bold{% endif %}">
+                    All
+                </a>
+            </li>
+            {% for category in categories %}
+                <li>
+                    <a 
+                        href="?category={{ category.name }}" 
+                        class="text-blue-500 {% if selected_category == category.name|stringformat:'s' %}font-bold{% endif %}">
+                        {{ category.name }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <section class="books w-3/4 grid grid-cols-3 gap-4 p-4">
+        {% for book in books %}
+            <div class="book-card bg-white shadow-md rounded-lg p-4">
+                <img src="{{ book.image.url }}" alt="Cover of {{ book.title }}" class="mb-2 rounded-lg">
+                <h5 class="font-bold text-lg">{{ book.title }}</h5>
+                <p class="text-gray-600 mb-2">{{ book.description|truncatewords:10 }}</p>
+                <p class="text-gray-800"><strong>Price:</strong> {{ book.borrow_price }}</p>
+                <a href="{% url 'book_detail' book.id %}" class="text-blue-500 underline">Book Details</a>
+            </div>
+        {% empty %}
+            <p>No books available for this category.</p>
+        {% endfor %}
+    </section>
+</div>
+{% endblock %}

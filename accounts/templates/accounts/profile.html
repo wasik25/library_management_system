@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div>
+    <h2>Profile</h2>
+    <p><strong>Name:</strong> {{ user_account.user.username }}</p>
+    <p><strong>Email:</strong> {{ user_account.user.email }}</p>
+    <p><strong>Balance:</strong> {{ user_account.balance }}</p>
+
+    <h3>Borrowed Books</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Book Name</th>
+                <th>Book Price</th>
+                <th>Balance After Borrowing</th>
+                <th>Borrowing Date</th>
+                <th>Return</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for borrow in borrow_history %}
+                <tr>
+                    <td>{{ borrow.id }}</td>
+                    <td>{{ borrow.book.title }}</td>
+                    <td>{{ borrow.book.borrow_price }}</td>
+                    <td>{{ borrow.user.balance|add:borrow.book.borrow_price }}</td>
+                    <td>{{ borrow.borrowed_at }}</td>
+                    <td>
+                        {% if not borrow.returned %}
+                        <form method="post" action="{% url 'return_book' borrow.id %}">
+                            {% csrf_token %}
+                            <button type="submit" 
+                                    style="background-color: #FF5722; color: white; border: none; padding: 5px 10px; 
+                                           text-align: center; text-decoration: none; font-size: 14px; margin: 2px; 
+                                           cursor: pointer; border-radius: 5px;">
+                                Return Book
+                            </button>
+                        </form>
+                        {% else %}
+                        <span style="color: green; font-weight: bold;">Returned</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6">No books borrowed yet.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

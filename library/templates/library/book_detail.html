@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="flex">
+    <div class="w-1/2">
+        <img src="{{ object.image.url }}" alt="{{ object.title }}" class="w-full">
+    </div>
+    <div class="w-1/2">
+        <h2 class="font-bold">{{ object.title }}</h2>
+        <p>{{ object.description }}</p>
+        <p>Categories: 
+            {% for category in object.categories.all %}
+                {{ category.name }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </p>
+        <p>Borrow Price: {{ object.borrow_price }}</p>
+
+        {% if user.is_authenticated %}
+            {% if user_borrowed %}
+                <p>You already borrowed this book.</p>
+            {% else %}
+                <form action="{% url 'borrow_book' object.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" 
+                            style="background-color: #4CAF50; color: white; border: none; padding: 10px 20px; 
+                                   text-align: center; text-decoration: none; font-size: 16px; margin: 4px 2px; 
+                                   cursor: pointer; border-radius: 5px;">
+                        Borrow Book
+                    </button>
+                </form>
+            {% endif %}
+        {% else %}
+            <p>Please <a href="{% url 'login' %}" class="text-blue-500">login</a> to borrow books.</p>
+        {% endif %}
+
+        <h3 class="font-bold mt-4">Reviews</h3>
+        {% for review in object.reviews.all %}
+        <div class="p-2 border-t">
+            <p>{{ review.review_text }}</p>
+            <p class="text-sm text-gray-500">by {{ review.user.user.username }} on {{ review.created_at }}</p>
+        </div>
+        {% endfor %}
+
+        {% if user.is_authenticated %}
+        <form action="{% url 'review_book' object.id %}" method="post">
+            {% csrf_token %}
+            <textarea name="review_text" placeholder="Write your review here" 
+                      style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;"></textarea>
+            <button type="submit" 
+                    style="background-color: #FF5722; color: white; border: none; padding: 10px 20px; 
+                           text-align: center; text-decoration: none; font-size: 16px; margin: 4px 2px; 
+                           cursor: pointer; border-radius: 5px;">
+                Submit Review
+            </button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

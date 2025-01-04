@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mb-4">
+
+    <div class="col-md-3">
+        <h3>Categories</h3>
+        <ul class="list-group">
+            <li class="list-group-item">
+                <a href="{% url 'books_list' %}" class="{% if not selected_category %}font-bold text-primary{% endif %}">
+                    All
+                </a>
+            </li>
+            {% for category in categories %}
+                <li class="list-group-item">
+                    <a href="?category={{ category.name }}" 
+                       class="{% if category.name == selected_category %}font-bold text-primary{% endif %}">
+                        {{ category.name }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+
+    <div class="col-md-9">
+        <h3>Books</h3>
+        <div class="row">
+            {% for book in books %}
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <img src="{{ book.image.url }}" class="card-img-top" alt="{{ book.title }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ book.title }}</h5>
+                            <p class="card-text">{{ book.description|truncatewords:15 }}</p>
+                            <p class="text-muted"><strong>Price:</strong> {{ book.borrow_price }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No books available for this category.</p>
+            {% endfor %}
+        </div>
+    </div>
+    
+</div>
+{% endblock %}
